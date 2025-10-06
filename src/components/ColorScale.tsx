@@ -62,6 +62,37 @@ function darkenColor(hex: string, percentage: number): string {
   return hslToHex(h, s, newL)
 }
 
+// Convert hex to RGB
+function hexToRgb(hex: string): [number, number, number] {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return [r, g, b]
+}
+
+// Calculate relative luminance
+function getRelativeLuminance(hex: string): number {
+  const [r, g, b] = hexToRgb(hex)
+  
+  const sRGB = [r, g, b].map(c => {
+    c = c / 255
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
+  })
+  
+  return 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2]
+}
+
+// Calculate contrast ratio between two colors
+function getContrastRatio(color1: string, color2: string): number {
+  const lum1 = getRelativeLuminance(color1)
+  const lum2 = getRelativeLuminance(color2)
+  
+  const brightest = Math.max(lum1, lum2)
+  const darkest = Math.min(lum1, lum2)
+  
+  return (brightest + 0.05) / (darkest + 0.05)
+}
+
 const useStyles = makeStyles({
   scaleContainer: {
     display: 'flex',
@@ -70,9 +101,10 @@ const useStyles = makeStyles({
     flexWrap: 'wrap',
   },
   scaleStep: {
-    width: '120px',
-    height: '120px',
+    width: '80px',
+    height: '80px',
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     color: 'white',
@@ -81,6 +113,18 @@ const useStyles = makeStyles({
     borderRadius: tokens.borderRadiusMedium,
     cursor: 'pointer',
     transition: 'background-color 0.15s ease-in-out',
+    padding: tokens.spacingVerticalXS,
+  },
+  stepNumber: {
+    fontSize: tokens.fontSizeBase300,
+    fontWeight: tokens.fontWeightBold,
+    marginBottom: '2px',
+  },
+  contrastInfo: {
+    fontSize: '10px',
+    lineHeight: '1.1',
+    textAlign: 'center',
+    opacity: 0.9,
   },
 })
 
@@ -188,18 +232,22 @@ export function ColorScale({ name, colors }: ColorScaleProps) {
         // Calculate the display color based on interaction state
         let displayColor = baseColor
         if (pressedStep === step) {
-          if (step >= 90) {
+          if (step > 90) {
             displayColor = darkenColor(baseColor, 6) // 6% darker when pressed for light colors
           } else {
             displayColor = lightenColor(baseColor, 6) // 6% lighter when pressed for dark colors
           }
         } else if (hoveredStep === step) {
-          if (step >= 90) {
+          if (step > 90) {
             displayColor = darkenColor(baseColor, 3) // 3% darker when hovered for light colors
           } else {
             displayColor = lightenColor(baseColor, 3) // 3% lighter when hovered for dark colors
           }
         }
+
+        // Calculate contrast ratios for current display color
+        const contrastVsWhite = getContrastRatio(displayColor, '#ffffff')
+        const contrastVsBlack = getContrastRatio(displayColor, '#000000')
         
         return (
           <div
@@ -217,7 +265,11 @@ export function ColorScale({ name, colors }: ColorScaleProps) {
             onMouseDown={() => setPressedStep(step)}
             onMouseUp={() => setPressedStep(null)}
           >
-            {step}
+            <div className={styles.stepNumber}>{step}</div>
+            <div className={styles.contrastInfo}>
+              <div>W: {contrastVsWhite.toFixed(1)}</div>
+              <div>B: {contrastVsBlack.toFixed(1)}</div>
+            </div>
           </div>
         )
       })}
