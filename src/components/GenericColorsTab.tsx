@@ -248,11 +248,11 @@ export function GenericColorsTab() {
             if (isPressed) {
               displayColor = shouldUseDarken(colorInfo.color) 
                 ? darkenColor(colorInfo.color, 6) 
-                : lightenColor(colorInfo.color, 8)
+                : lightenColor(colorInfo.color, 6)
             } else if (isHovered) {
               displayColor = shouldUseDarken(colorInfo.color) 
                 ? darkenColor(colorInfo.color, 3) 
-                : lightenColor(colorInfo.color, 4)
+                : lightenColor(colorInfo.color, 3)
             }
             
             const textColor = ['#ffffff', '#fcfcfc', '#fff1f3', '#fff2ee', '#e7fbef', '#f5f5f5', '#dedede'].includes(colorInfo.color)
