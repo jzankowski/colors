@@ -30,7 +30,7 @@ function App() {
   const [selectedTab, setSelectedTab] = useState<TabId>('scales')
   const styles = useStyles()
 
-  const handleTabSelect = (event: SelectTabEvent, data: SelectTabData) => {
+  const handleTabSelect = (_event: SelectTabEvent, data: SelectTabData) => {
     setSelectedTab(data.value as TabId)
   }
 
