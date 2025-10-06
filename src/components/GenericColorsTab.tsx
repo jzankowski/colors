@@ -166,7 +166,6 @@ const useStyles = makeStyles({
     backgroundColor: '#ffffff',
     borderRadius: tokens.borderRadiusMedium,
     cursor: 'pointer',
-    border: `1px solid ${tokens.colorNeutralStroke2}`,
   },
 })
 
@@ -210,15 +209,15 @@ const genericColors = [
   { category: 'Border', name: 'Status Success Tertiary', color: '#b9eccf', label: 'Success Tertiary' },
   
   // Foreground colors
-  { category: 'Foreground', name: 'Text Primary', color: '#242424', label: 'Text Primary' },
-  { category: 'Foreground', name: 'Text Secondary', color: '#5d5d5d', label: 'Text Secondary' },
-  { category: 'Foreground', name: 'Text Placeholder', color: '#929292', label: 'Text Placeholder' },
-  { category: 'Foreground', name: 'Status Danger Text', color: '#aa1546', label: 'Danger Text' },
-  { category: 'Foreground', name: 'Status Danger Icon', color: '#c02d56', label: 'Danger Icon' },
-  { category: 'Foreground', name: 'Status Warning Text', color: '#a93901', label: 'Warning Text' },
-  { category: 'Foreground', name: 'Status Warning Icon', color: '#cd4808', label: 'Warning Icon' },
-  { category: 'Foreground', name: 'Status Success Text', color: '#017048', label: 'Success Text' },
-  { category: 'Foreground', name: 'Status Success Icon', color: '#008455', label: 'Success Icon' },
+  { category: 'Foreground', name: 'Text Primary', color: '#242424', label: 'Primary' },
+  { category: 'Foreground', name: 'Text Secondary', color: '#5d5d5d', label: 'Secondary' },
+  { category: 'Foreground', name: 'Text Placeholder', color: '#929292', label: 'Placeholder' },
+  { category: 'Foreground', name: 'Status Danger Text', color: '#aa1546', label: 'Primary' },
+  { category: 'Foreground', name: 'Status Danger Icon', color: '#c02d56', label: 'Secondary' },
+  { category: 'Foreground', name: 'Status Warning Text', color: '#a93901', label: 'Primary' },
+  { category: 'Foreground', name: 'Status Warning Icon', color: '#cd4808', label: 'Secondary' },
+  { category: 'Foreground', name: 'Status Success Text', color: '#017048', label: 'Primary' },
+  { category: 'Foreground', name: 'Status Success Icon', color: '#008455', label: 'Secondary' },
 ]
 
 export function GenericColorsTab() {
