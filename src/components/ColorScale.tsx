@@ -1,4 +1,66 @@
+import { useState } from 'react'
 import { makeStyles, tokens } from '@fluentui/react-components'
+
+// Color utility functions for cross-browser support
+function hexToHsl(hex: string): [number, number, number] {
+  const r = parseInt(hex.slice(1, 3), 16) / 255
+  const g = parseInt(hex.slice(3, 5), 16) / 255
+  const b = parseInt(hex.slice(5, 7), 16) / 255
+
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  let h = 0
+  let s = 0
+  const l = (max + min) / 2
+
+  if (max !== min) {
+    const d = max - min
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break
+      case g: h = (b - r) / d + 2; break
+      case b: h = (r - g) / d + 4; break
+    }
+    h /= 6
+  }
+
+  return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)]
+}
+
+function hslToHex(h: number, s: number, l: number): string {
+  h = h / 360
+  s = s / 100
+  l = l / 100
+
+  const hue2rgb = (p: number, q: number, t: number) => {
+    if (t < 0) t += 1
+    if (t > 1) t -= 1
+    if (t < 1/6) return p + (q - p) * 6 * t
+    if (t < 1/2) return q
+    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6
+    return p
+  }
+
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s
+  const p = 2 * l - q
+  const r = hue2rgb(p, q, h + 1/3)
+  const g = hue2rgb(p, q, h)
+  const b = hue2rgb(p, q, h - 1/3)
+
+  return `#${Math.round(r * 255).toString(16).padStart(2, '0')}${Math.round(g * 255).toString(16).padStart(2, '0')}${Math.round(b * 255).toString(16).padStart(2, '0')}`
+}
+
+function lightenColor(hex: string, percentage: number): string {
+  const [h, s, l] = hexToHsl(hex)
+  const newL = Math.min(100, l + percentage)
+  return hslToHex(h, s, newL)
+}
+
+function darkenColor(hex: string, percentage: number): string {
+  const [h, s, l] = hexToHsl(hex)
+  const newL = Math.max(0, l - percentage)
+  return hslToHex(h, s, newL)
+}
 
 const useStyles = makeStyles({
   scaleContainer: {
@@ -8,8 +70,8 @@ const useStyles = makeStyles({
     flexWrap: 'wrap',
   },
   scaleStep: {
-    width: '60px',
-    height: '60px',
+    width: '120px',
+    height: '120px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -17,7 +79,8 @@ const useStyles = makeStyles({
     fontWeight: tokens.fontWeightSemibold,
     fontSize: tokens.fontSizeBase200,
     borderRadius: tokens.borderRadiusMedium,
-    border: `1px solid ${tokens.colorNeutralStroke1}`,
+    cursor: 'pointer',
+    transition: 'background-color 0.15s ease-in-out',
   },
 })
 
@@ -106,6 +169,8 @@ const colorScales: Record<string, ColorScaleData> = {
 
 export function ColorScale({ name, colors }: ColorScaleProps) {
   const styles = useStyles()
+  const [hoveredStep, setHoveredStep] = useState<number | null>(null)
+  const [pressedStep, setPressedStep] = useState<number | null>(null)
   
   // Get the color scale for this name
   const scaleColors = colorScales[name as keyof typeof colorScales] || colors
@@ -117,17 +182,40 @@ export function ColorScale({ name, colors }: ColorScaleProps) {
     <div className={styles.scaleContainer}>
       {steps.map((step) => {
         const stepKey = step.toString()
-        const color = scaleColors[stepKey] || '#cccccc'
+        const baseColor = scaleColors[stepKey] || '#cccccc'
         const textColor = step <= 80 ? 'white' : 'black'
+        
+        // Calculate the display color based on interaction state
+        let displayColor = baseColor
+        if (pressedStep === step) {
+          if (step >= 90) {
+            displayColor = darkenColor(baseColor, 6) // 6% darker when pressed for light colors
+          } else {
+            displayColor = lightenColor(baseColor, 6) // 6% lighter when pressed for dark colors
+          }
+        } else if (hoveredStep === step) {
+          if (step >= 90) {
+            displayColor = darkenColor(baseColor, 3) // 3% darker when hovered for light colors
+          } else {
+            displayColor = lightenColor(baseColor, 3) // 3% lighter when hovered for dark colors
+          }
+        }
         
         return (
           <div
             key={step}
             className={styles.scaleStep}
             style={{
-              backgroundColor: color,
+              backgroundColor: displayColor,
               color: textColor,
             }}
+            onMouseEnter={() => setHoveredStep(step)}
+            onMouseLeave={() => {
+              setHoveredStep(null)
+              setPressedStep(null)
+            }}
+            onMouseDown={() => setPressedStep(step)}
+            onMouseUp={() => setPressedStep(null)}
           >
             {step}
           </div>
