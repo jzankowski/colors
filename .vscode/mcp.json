@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "fluent-agent": {
+      "type": "sse",
+      "url": "https://chat.fluentui.dev/sse"
+    }
+  }
+}
