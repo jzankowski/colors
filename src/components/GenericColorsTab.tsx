@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { makeStyles, tokens } from '@fluentui/react-components'
+import { PersonRegular, AlertRegular, CheckmarkRegular } from '@fluentui/react-icons'
 
 // Color utility functions (same as ColorScale)
 function hexToHsl(hex: string): [number, number, number] {
@@ -155,6 +156,18 @@ const useStyles = makeStyles({
     cursor: 'pointer',
     transition: 'background-color 0.15s ease-in-out',
   },
+  foregroundSample: {
+    width: '100%',
+    height: '50px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: tokens.spacingHorizontalS,
+    backgroundColor: '#ffffff',
+    borderRadius: tokens.borderRadiusMedium,
+    cursor: 'pointer',
+    border: `1px solid ${tokens.colorNeutralStroke2}`,
+  },
 })
 
 // Using colors from the Generic (Bebop) section in variables.json
@@ -247,26 +260,50 @@ export function GenericColorsTab() {
               ? '#424242'
               : '#ffffff'
             
+            // Choose appropriate icon based on color type
+            const getIcon = () => {
+              if (colorInfo.name.includes('Danger')) return <AlertRegular />
+              if (colorInfo.name.includes('Success')) return <CheckmarkRegular />
+              return <PersonRegular />
+            }
+
             return (
               <div key={uniqueKey} className={styles.colorRow}>
                 <h3 className={styles.colorTitle}>{colorInfo.label}</h3>
-                <div
-                  className={styles.colorSample}
-                  style={colorInfo.category === 'Border' ? {
-                    backgroundColor: 'transparent',
-                    border: `1px solid ${displayColor}`,
-                    color: '#242424',
-                    height: '48px'
-                  } : { 
-                    backgroundColor: displayColor,
-                    color: textColor
-                  }}
-                  onMouseEnter={() => setHoveredColor(uniqueKey)}
-                  onMouseLeave={() => setHoveredColor(null)}
-                  onMouseDown={() => setPressedColor(uniqueKey)}
-                  onMouseUp={() => setPressedColor(null)}
-                >
-                </div>
+                {colorInfo.category === 'Foreground' ? (
+                  <div
+                    className={styles.foregroundSample}
+                    onMouseEnter={() => setHoveredColor(uniqueKey)}
+                    onMouseLeave={() => setHoveredColor(null)}
+                    onMouseDown={() => setPressedColor(uniqueKey)}
+                    onMouseUp={() => setPressedColor(null)}
+                  >
+                    <div style={{ color: displayColor, fontSize: '20px' }}>
+                      {getIcon()}
+                    </div>
+                    <span style={{ color: displayColor, fontWeight: tokens.fontWeightSemibold }}>
+                      Sample Text
+                    </span>
+                  </div>
+                ) : (
+                  <div
+                    className={styles.colorSample}
+                    style={colorInfo.category === 'Border' ? {
+                      backgroundColor: 'transparent',
+                      border: `1px solid ${displayColor}`,
+                      color: '#242424',
+                      height: '48px'
+                    } : { 
+                      backgroundColor: displayColor,
+                      color: textColor
+                    }}
+                    onMouseEnter={() => setHoveredColor(uniqueKey)}
+                    onMouseLeave={() => setHoveredColor(null)}
+                    onMouseDown={() => setPressedColor(uniqueKey)}
+                    onMouseUp={() => setPressedColor(null)}
+                  >
+                  </div>
+                )}
               </div>
             )
           })}
