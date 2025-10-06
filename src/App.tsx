@@ -8,6 +8,7 @@ import {
   SelectTabEvent,
 } from '@fluentui/react-components'
 import { ScalesTab } from './components/ScalesTab'
+import { PrimitivesTab } from './components/PrimitivesTab'
 import { GenericColorsTab } from './components/GenericColorsTab'
 
 const useStyles = makeStyles({
@@ -24,7 +25,7 @@ const useStyles = makeStyles({
   },
 })
 
-type TabId = 'scales' | 'generic'
+type TabId = 'scales' | 'primitives' | 'generic'
 
 function App() {
   const [selectedTab, setSelectedTab] = useState<TabId>('scales')
@@ -44,11 +45,13 @@ function App() {
         className={styles.tabList}
       >
         <Tab value="scales">Scales</Tab>
+        <Tab value="primitives">Primitives</Tab>
         <Tab value="generic">Generic</Tab>
       </TabList>
 
       <div className={styles.content}>
         {selectedTab === 'scales' && <ScalesTab />}
+        {selectedTab === 'primitives' && <PrimitivesTab />}
         {selectedTab === 'generic' && <GenericColorsTab />}
       </div>
     </div>
