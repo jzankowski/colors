@@ -102,7 +102,7 @@ const useStyles = makeStyles({
   },
   scaleStep: {
     width: '80px',
-    height: '80px',
+    height: '95px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -118,6 +118,14 @@ const useStyles = makeStyles({
   stepNumber: {
     fontSize: tokens.fontSizeBase300,
     fontWeight: tokens.fontWeightBold,
+    marginBottom: '2px',
+  },
+  hexValue: {
+    fontSize: '9px',
+    lineHeight: '1',
+    textAlign: 'center',
+    opacity: 0.9,
+    fontFamily: 'monospace',
     marginBottom: '2px',
   },
   contrastInfo: {
@@ -266,6 +274,7 @@ export function ColorScale({ name, colors }: ColorScaleProps) {
             onMouseUp={() => setPressedStep(null)}
           >
             <div className={styles.stepNumber}>{step}</div>
+            <div className={styles.hexValue}>{displayColor.toUpperCase()}</div>
             <div className={styles.contrastInfo}>
               <div>W: {contrastVsWhite.toFixed(1)}</div>
               <div>B: {contrastVsBlack.toFixed(1)}</div>

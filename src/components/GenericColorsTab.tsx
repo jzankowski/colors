@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { makeStyles, tokens } from '@fluentui/react-components'
 import { PersonRegular, AlertRegular, CheckmarkRegular } from '@fluentui/react-icons'
 
@@ -115,18 +114,19 @@ function shouldUseDarken(hex: string): boolean {
 const useStyles = makeStyles({
   container: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-    gap: tokens.spacingHorizontalL,
-    alignItems: 'start',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    gap: tokens.spacingVerticalM,
+    padding: tokens.spacingVerticalM,
   },
   categoryColumn: {
     display: 'flex',
     flexDirection: 'column',
-    gap: tokens.spacingVerticalS,
+    gap: tokens.spacingVerticalXS,
   },
   categoryTitle: {
-    fontSize: '18px',
-    fontWeight: '600',
+    fontSize: tokens.fontSizeBase300,
+    fontWeight: tokens.fontWeightSemibold,
+    textAlign: 'left',
     margin: '0 0 16px 0',
     color: '#242424',
     borderBottom: `2px solid ${tokens.colorNeutralStroke1}`,
@@ -144,28 +144,50 @@ const useStyles = makeStyles({
     margin: 0,
     color: tokens.colorNeutralForeground1,
   },
+  statesContainer: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr 1fr',
+    gap: tokens.spacingHorizontalXS,
+  },
+  stateColumn: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: tokens.spacingVerticalXXS,
+  },
+  stateLabel: {
+    fontSize: tokens.fontSizeBase100,
+    fontWeight: tokens.fontWeightMedium,
+    color: tokens.colorNeutralForeground2,
+    textAlign: 'center',
+  },
   colorSample: {
     width: '100%',
-    height: '50px',
+    height: '40px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     color: 'white',
     fontWeight: tokens.fontWeightSemibold,
     borderRadius: tokens.borderRadiusMedium,
-    cursor: 'pointer',
-    transition: 'background-color 0.15s ease-in-out',
+    fontSize: tokens.fontSizeBase100,
   },
   foregroundSample: {
     width: '100%',
-    height: '50px',
+    height: '40px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: tokens.spacingHorizontalS,
+    gap: tokens.spacingHorizontalXXS,
     backgroundColor: '#ffffff',
     borderRadius: tokens.borderRadiusMedium,
-    cursor: 'pointer',
+    fontSize: tokens.fontSizeBase100,
+  },
+  hexValue: {
+    fontSize: tokens.fontSizeBase100,
+    color: tokens.colorNeutralForeground3,
+    textAlign: 'center',
+    fontFamily: 'monospace',
   },
 })
 
@@ -222,8 +244,6 @@ const genericColors = [
 
 export function GenericColorsTab() {
   const styles = useStyles()
-  const [hoveredColor, setHoveredColor] = useState<string | null>(null)
-  const [pressedColor, setPressedColor] = useState<string | null>(null)
 
   // Group colors by category
   const groupedColors = genericColors.reduce((acc, colorInfo) => {
@@ -240,24 +260,19 @@ export function GenericColorsTab() {
         <div key={category} className={styles.categoryColumn}>
           <h2 className={styles.categoryTitle}>{category}</h2>
           {colors.map((colorInfo) => {
-            const uniqueKey = `${colorInfo.category}-${colorInfo.label}`
-            const isHovered = hoveredColor === uniqueKey
-            const isPressed = pressedColor === uniqueKey
-            
-            let displayColor = colorInfo.color
-            if (isPressed) {
-              displayColor = shouldUseDarken(colorInfo.color) 
-                ? darkenColor(colorInfo.color, 6) 
-                : lightenColor(colorInfo.color, 6)
-            } else if (isHovered) {
-              displayColor = shouldUseDarken(colorInfo.color) 
-                ? darkenColor(colorInfo.color, 3) 
-                : lightenColor(colorInfo.color, 3)
-            }
-            
-            const textColor = ['#ffffff', '#fcfcfc', '#fff1f3', '#fff2ee', '#e7fbef', '#f5f5f5', '#dedede'].includes(colorInfo.color)
-              ? '#424242'
-              : '#ffffff'
+            const restColor = colorInfo.color
+            const hoverColor = shouldUseDarken(colorInfo.color) 
+              ? darkenColor(colorInfo.color, 3) 
+              : lightenColor(colorInfo.color, 3)
+            const pressedColor = shouldUseDarken(colorInfo.color) 
+              ? darkenColor(colorInfo.color, 6) 
+              : lightenColor(colorInfo.color, 6)
+
+            const states = [
+              { label: 'Rest', color: restColor },
+              { label: 'Hover', color: hoverColor },
+              { label: 'Pressed', color: pressedColor }
+            ]
             
             // Choose appropriate icon based on color type
             const getIcon = () => {
@@ -267,42 +282,47 @@ export function GenericColorsTab() {
             }
 
             return (
-              <div key={uniqueKey} className={styles.colorRow}>
+              <div key={`${colorInfo.category}-${colorInfo.label}`} className={styles.colorRow}>
                 <h3 className={styles.colorTitle}>{colorInfo.label}</h3>
-                {colorInfo.category === 'Foreground' ? (
-                  <div
-                    className={styles.foregroundSample}
-                    onMouseEnter={() => setHoveredColor(uniqueKey)}
-                    onMouseLeave={() => setHoveredColor(null)}
-                    onMouseDown={() => setPressedColor(uniqueKey)}
-                    onMouseUp={() => setPressedColor(null)}
-                  >
-                    <div style={{ color: displayColor, fontSize: '20px' }}>
-                      {getIcon()}
-                    </div>
-                    <span style={{ color: displayColor, fontWeight: tokens.fontWeightSemibold }}>
-                      Sample Text
-                    </span>
-                  </div>
-                ) : (
-                  <div
-                    className={styles.colorSample}
-                    style={colorInfo.category === 'Border' ? {
-                      backgroundColor: 'transparent',
-                      border: `1px solid ${displayColor}`,
-                      color: '#242424',
-                      height: '48px'
-                    } : { 
-                      backgroundColor: displayColor,
-                      color: textColor
-                    }}
-                    onMouseEnter={() => setHoveredColor(uniqueKey)}
-                    onMouseLeave={() => setHoveredColor(null)}
-                    onMouseDown={() => setPressedColor(uniqueKey)}
-                    onMouseUp={() => setPressedColor(null)}
-                  >
-                  </div>
-                )}
+                <div className={styles.statesContainer}>
+                  {states.map((state) => {
+                    const currentTextColor = ['#ffffff', '#fcfcfc', '#fff1f3', '#fff2ee', '#e7fbef', '#f5f5f5', '#dedede'].includes(state.color)
+                      ? '#424242'
+                      : '#ffffff'
+
+                    return (
+                      <div key={state.label} className={styles.stateColumn}>
+                        <div className={styles.stateLabel}>{state.label}</div>
+                        {colorInfo.category === 'Foreground' ? (
+                          <div
+                            className={styles.foregroundSample}
+                          >
+                            <div style={{ color: state.color, fontSize: '16px' }}>
+                              {getIcon()}
+                            </div>
+                            <span style={{ color: state.color, fontWeight: tokens.fontWeightSemibold }}>
+                              Text
+                            </span>
+                          </div>
+                        ) : (
+                          <div
+                            className={styles.colorSample}
+                            style={colorInfo.category === 'Border' ? {
+                              backgroundColor: 'transparent',
+                              border: `2px solid ${state.color}`,
+                              color: '#242424',
+                            } : { 
+                              backgroundColor: state.color,
+                              color: currentTextColor
+                            }}
+                          >
+                          </div>
+                        )}
+                        <div className={styles.hexValue}>{state.color.toUpperCase()}</div>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             )
           })}

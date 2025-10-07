@@ -70,13 +70,13 @@ function shouldUseDarken(step: number): boolean {
 // Get contrast ratio text for each level
 function getContrastRatioText(level: number): string {
   switch (level) {
-    case 0: return '21:1' // Only for Neutral level 0
-    case 1: return '7:1'
-    case 2: return '4.5:1'
-    case 3: return '3:1'
-    case 4: return '1.3:1'
-    case 5: return '1.2:1'
-    case 6: return '1.1:1'
+    case 0: return '10 - 21:1' // Only for Neutral level 0
+    case 1: return '60 - 7:1'
+    case 2: return '80 - 4.5:1'
+    case 3: return '100 - 3:1'
+    case 4: return '130 - 1.3:1'
+    case 5: return '140 - 1.2:1'
+    case 6: return '150 - 1.1:1'
     default: return ''
   }
 }
@@ -115,8 +115,9 @@ const useStyles = makeStyles({
   },
   colorSample: {
     width: '100%',
-    height: '50px',
+    height: '60px',
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     color: 'white',
@@ -124,6 +125,12 @@ const useStyles = makeStyles({
     borderRadius: tokens.borderRadiusMedium,
     cursor: 'pointer',
     transition: 'background-color 0.15s ease-in-out',
+    gap: '2px',
+  },
+  hexValue: {
+    fontSize: '10px',
+    fontFamily: 'monospace',
+    opacity: 0.9,
   },
 })
 
@@ -216,7 +223,8 @@ export function PrimitivesTab() {
                   onMouseDown={() => setPressedColor(uniqueKey)}
                   onMouseUp={() => setPressedColor(null)}
                 >
-                  {getContrastRatioText(colorInfo.level)}
+                  <div>{getContrastRatioText(colorInfo.level)}</div>
+                  <div className={styles.hexValue}>{displayColor.toUpperCase()}</div>
                 </div>
               </div>
             )
