@@ -280,10 +280,10 @@ export function GenericColorsTab() {
             const restColor = colorInfo.color
             const hoverColor = shouldUseDarken(colorInfo.color) 
               ? darkenColor(colorInfo.color, 3) 
-              : lightenColor(colorInfo.color, 3)
+              : lightenColor(colorInfo.color, 6)
             const pressedColor = shouldUseDarken(colorInfo.color) 
               ? darkenColor(colorInfo.color, 6) 
-              : lightenColor(colorInfo.color, 6)
+              : lightenColor(colorInfo.color, 3)
 
             const states = [
               { label: 'Rest', color: restColor },

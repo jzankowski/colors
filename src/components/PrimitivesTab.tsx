@@ -206,11 +206,11 @@ export function PrimitivesTab() {
             if (isPressed) {
               displayColor = shouldUseDarken(colorInfo.step) 
                 ? darkenColor(colorInfo.color, 6) 
-                : lightenColor(colorInfo.color, 6)
+                : lightenColor(colorInfo.color, 3)
             } else if (isHovered) {
               displayColor = shouldUseDarken(colorInfo.step) 
                 ? darkenColor(colorInfo.color, 3) 
-                : lightenColor(colorInfo.color, 3)
+                : lightenColor(colorInfo.color, 6)
             }
             
             const textColor = ['#ffffff', '#fcfcfc', '#fff1f3', '#fff2ee', '#e7fbef', '#f5f5f5', '#dedede', '#ebebeb', '#ffd0d6', '#ffe3e6', '#ffd3c4', '#ffe5dc', '#b9eccf', '#d0f6e0', '#D3DDff', '#E4EBFF', '#F2F5FF'].includes(colorInfo.color)
