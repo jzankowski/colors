@@ -10,6 +10,7 @@ import {
 import { ScalesTab } from './components/ScalesTab'
 import { PrimitivesTab } from './components/PrimitivesTab'
 import { GenericColorsTab } from './components/GenericColorsTab'
+import { ContrastGridsTab } from './components/ContrastGridsTab'
 
 const useStyles = makeStyles({
   container: {
@@ -25,7 +26,7 @@ const useStyles = makeStyles({
   },
 })
 
-type TabId = 'scales' | 'primitives' | 'generic'
+type TabId = 'scales' | 'primitives' | 'generic' | 'contrast'
 
 function App() {
   const [selectedTab, setSelectedTab] = useState<TabId>('scales')
@@ -47,12 +48,14 @@ function App() {
         <Tab value="scales">Scales</Tab>
         <Tab value="primitives">Primitives</Tab>
         <Tab value="generic">Generic</Tab>
+        <Tab value="contrast">Contrast Grids</Tab>
       </TabList>
 
       <div className={styles.content}>
         {selectedTab === 'scales' && <ScalesTab />}
         {selectedTab === 'primitives' && <PrimitivesTab />}
         {selectedTab === 'generic' && <GenericColorsTab />}
+        {selectedTab === 'contrast' && <ContrastGridsTab />}
       </div>
     </div>
   )
