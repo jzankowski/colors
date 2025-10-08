@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { makeStyles, tokens } from '@fluentui/react-components'
 
 // Color utility functions (same as other components)
@@ -62,9 +61,9 @@ function darkenColor(hex: string, percentage: number): string {
   return hslToHex(h, s, newL)
 }
 
-// Determine interaction pattern based on step mapping
+// Determine interaction pattern based on step mapping (matches ColorScale component)
 function shouldUseDarken(step: number): boolean {
-  return step >= 90 // Light colors (90, 94, 97) should get darker on interaction
+  return step >= 54 // Light colors (54+) should get darker on interaction
 }
 
 // Get contrast ratio text for each step
@@ -113,9 +112,26 @@ const useStyles = makeStyles({
     margin: 0,
     color: tokens.colorNeutralForeground1,
   },
+  statesContainer: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr 1fr',
+    gap: tokens.spacingHorizontalXS,
+  },
+  stateColumn: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: tokens.spacingVerticalXXS,
+  },
+  stateLabel: {
+    fontSize: tokens.fontSizeBase100,
+    fontWeight: tokens.fontWeightMedium,
+    color: tokens.colorNeutralForeground2,
+    textAlign: 'center',
+  },
   colorSample: {
     width: '100%',
-    height: '60px',
+    height: '50px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -123,14 +139,14 @@ const useStyles = makeStyles({
     color: 'white',
     fontWeight: tokens.fontWeightSemibold,
     borderRadius: tokens.borderRadiusMedium,
-    cursor: 'pointer',
-    transition: 'background-color 0.15s ease-in-out',
     gap: '2px',
+    fontSize: tokens.fontSizeBase100,
   },
   hexValue: {
-    fontSize: '10px',
+    fontSize: tokens.fontSizeBase100,
     fontFamily: 'monospace',
     opacity: 0.9,
+    textAlign: 'center',
   },
 })
 
@@ -180,8 +196,6 @@ const primitiveColors = [
 
 export function PrimitivesTab() {
   const styles = useStyles()
-  const [hoveredColor, setHoveredColor] = useState<string | null>(null)
-  const [pressedColor, setPressedColor] = useState<string | null>(null)
 
   // Group colors by category
   const groupedColors = primitiveColors.reduce((acc, colorInfo) => {
@@ -199,40 +213,45 @@ export function PrimitivesTab() {
           <h2 className={styles.categoryTitle}>{category}</h2>
           {colors.map((colorInfo) => {
             const uniqueKey = `${colorInfo.category}-${colorInfo.level}`
-            const isHovered = hoveredColor === uniqueKey
-            const isPressed = pressedColor === uniqueKey
             
-            let displayColor = colorInfo.color
-            if (isPressed) {
-              displayColor = shouldUseDarken(colorInfo.step) 
-                ? darkenColor(colorInfo.color, 6) 
-                : lightenColor(colorInfo.color, 3)
-            } else if (isHovered) {
-              displayColor = shouldUseDarken(colorInfo.step) 
-                ? darkenColor(colorInfo.color, 3) 
-                : lightenColor(colorInfo.color, 6)
-            }
-            
-            const textColor = ['#ffffff', '#fcfcfc', '#fff1f3', '#fff2ee', '#e7fbef', '#f5f5f5', '#dedede', '#ebebeb', '#ffd0d6', '#ffe3e6', '#ffd3c4', '#ffe5dc', '#b9eccf', '#d0f6e0', '#D3DDff', '#E4EBFF', '#F2F5FF'].includes(colorInfo.color)
-              ? '#424242'
-              : '#ffffff'
+            const restColor = colorInfo.color
+            const hoverColor = shouldUseDarken(colorInfo.step) 
+              ? darkenColor(colorInfo.color, 3) 
+              : lightenColor(colorInfo.color, 6)
+            const pressedColor = shouldUseDarken(colorInfo.step) 
+              ? darkenColor(colorInfo.color, 6) 
+              : lightenColor(colorInfo.color, 3)
+
+            const states = [
+              { label: 'Rest', color: restColor },
+              { label: 'Hover', color: hoverColor },
+              { label: 'Pressed', color: pressedColor }
+            ]
             
             return (
               <div key={uniqueKey} className={styles.colorRow}>
                 <h3 className={styles.colorTitle}>{colorInfo.label}</h3>
-                <div
-                  className={styles.colorSample}
-                  style={{ 
-                    backgroundColor: displayColor,
-                    color: textColor
-                  }}
-                  onMouseEnter={() => setHoveredColor(uniqueKey)}
-                  onMouseLeave={() => setHoveredColor(null)}
-                  onMouseDown={() => setPressedColor(uniqueKey)}
-                  onMouseUp={() => setPressedColor(null)}
-                >
-                  <div>{getContrastRatioText(colorInfo.step)}</div>
-                  <div className={styles.hexValue}>{displayColor.toUpperCase()}</div>
+                <div className={styles.statesContainer}>
+                  {states.map((state) => {
+                    // Use step-based text color logic that matches ColorScale component
+                    const currentTextColor = colorInfo.step > 75 ? '#424242' : '#ffffff'
+
+                    return (
+                      <div key={state.label} className={styles.stateColumn}>
+                        <div className={styles.stateLabel}>{state.label}</div>
+                        <div
+                          className={styles.colorSample}
+                          style={{ 
+                            backgroundColor: state.color,
+                            color: currentTextColor
+                          }}
+                        >
+                          <div>{getContrastRatioText(colorInfo.step)}</div>
+                          <div className={styles.hexValue}>{state.color.toUpperCase()}</div>
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             )

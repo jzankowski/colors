@@ -282,13 +282,13 @@ export function ColorScale({ name, colors }: ColorScaleProps) {
         // Calculate the display color based on interaction state
         let displayColor = baseColor
         if (pressedStep === step) {
-          if (step >= 75) {
+          if (step >= 54) {
             displayColor = darkenColor(baseColor, 6) // 6% darker when pressed for light colors
           } else {
             displayColor = lightenColor(baseColor, 3) // 6% lighter when pressed for dark colors
           }
         } else if (hoveredStep === step) {
-          if (step >= 75) {
+          if (step >= 54) {
             displayColor = darkenColor(baseColor, 3) // 3% darker when hovered for light colors
           } else {
             displayColor = lightenColor(baseColor, 6) // 3% lighter when hovered for dark colors
