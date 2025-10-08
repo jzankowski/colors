@@ -199,6 +199,24 @@ const colorScales: Record<string, ColorScaleData> = {
     '150': '#e7fbef',
     '160': '#f4fff9',
   },
+  'Brand': {
+    '10': '#192144',
+    '20': '#1F285A',
+    '30': '#263179',
+    '40': '#2E399B',
+    '50': '#3641BC',
+    '60': '#3B47CF',
+    '70': '#3F4BDB',
+    '80': '#4858EB',
+    '90': '#5265F8',
+    '100': '#6D86FF',
+    '110': '#92A8FF',
+    '120': '#B4C5FF',
+    '130': '#D3DDff ',
+    '140': '#E4EBFF',
+    '150': '#F2F5FF',
+    '160': '#FBFCFE',
+  },
   'Neutral': {
     '10': '#242424',
     '20': '#2e2e2e',
@@ -219,6 +237,31 @@ const colorScales: Record<string, ColorScaleData> = {
   },
 }
 
+// Map new steps to existing color values (dark to light progression)
+function getColorForStep(step: number, scaleColors: Record<string, string>): string {
+  const stepMapping: Record<number, string> = {
+    26: '10',  // Darkest
+    30: '20',  
+    35: '30',  
+    40: '40',  
+    45: '50',  
+    48: '60',  
+    50: '70',  
+    54: '80',  
+    57: '90',  
+    66: '100',  
+    75: '110',  
+    83: '120',  
+    90: '130',  
+    94: '140',  
+    97: '150',  
+    99: '160', // Lightest
+  }
+  
+  const mappedStep = stepMapping[step]
+  return scaleColors[mappedStep] || scaleColors['50'] || '#cccccc'
+}
+
 export function ColorScale({ name, colors }: ColorScaleProps) {
   const styles = useStyles()
   const [hoveredStep, setHoveredStep] = useState<number | null>(null)
@@ -227,26 +270,25 @@ export function ColorScale({ name, colors }: ColorScaleProps) {
   // Get the color scale for this name
   const scaleColors = colorScales[name as keyof typeof colorScales] || colors
   
-  // Generate steps from 10 to 160 in increments of 10
-  const steps = Array.from({ length: 16 }, (_, i) => (i + 1) * 10)
+  // Custom steps as requested
+  const steps = [26, 30, 35, 40, 45, 48, 50, 54, 57, 66, 75, 83, 90, 94, 97, 99]
 
   return (
     <div className={styles.scaleContainer}>
       {steps.map((step) => {
-        const stepKey = step.toString()
-        const baseColor = scaleColors[stepKey] || '#cccccc'
-        const textColor = step <= 80 ? 'white' : 'black'
+        const baseColor = getColorForStep(step, scaleColors)
+        const textColor = step <= 75 ? 'white' : 'black'
         
         // Calculate the display color based on interaction state
         let displayColor = baseColor
         if (pressedStep === step) {
-          if (step === 70 || step === 80 || step > 100) {
+          if (step >= 75) {
             displayColor = darkenColor(baseColor, 6) // 6% darker when pressed for light colors
           } else {
             displayColor = lightenColor(baseColor, 6) // 6% lighter when pressed for dark colors
           }
         } else if (hoveredStep === step) {
-          if (step === 70 || step === 80 || step > 100) {
+          if (step >= 75) {
             displayColor = darkenColor(baseColor, 3) // 3% darker when hovered for light colors
           } else {
             displayColor = lightenColor(baseColor, 3) // 3% lighter when hovered for dark colors

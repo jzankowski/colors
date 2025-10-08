@@ -64,19 +64,19 @@ function darkenColor(hex: string, percentage: number): string {
 
 // Determine interaction pattern based on step mapping
 function shouldUseDarken(step: number): boolean {
-  return step === 70 || step === 80 || step > 100
+  return step >= 90 // Light colors (90, 94, 97) should get darker on interaction
 }
 
-// Get contrast ratio text for each level
-function getContrastRatioText(level: number): string {
-  switch (level) {
-    case 0: return '10 - 21:1' // Only for Neutral level 0
-    case 1: return '60 - 7:1'
-    case 2: return '80 - 4.5:1'
-    case 3: return '100 - 3:1'
-    case 4: return '130 - 1.3:1'
-    case 5: return '140 - 1.2:1'
-    case 6: return '150 - 1.1:1'
+// Get contrast ratio text for each step
+function getContrastRatioText(step: number): string {
+  switch (step) {
+    case 26: return '26 - 21:1' // Only for Neutral level 0
+    case 48: return '48 - 7:1'
+    case 54: return '54 - 4.5:1'
+    case 66: return '66 - 3:1'
+    case 90: return '90 - 1.3:1'
+    case 94: return '94 - 1.2:1'
+    case 97: return '97 - 1.1:1'
     default: return ''
   }
 }
@@ -137,37 +137,45 @@ const useStyles = makeStyles({
 // Primitive colors based on Global (Bebop) colors from variables.json
 const primitiveColors = [
   // Neutral primitives (0-6)
-  { category: 'Neutral', level: 0, step: 10, color: '#242424', label: '0' },
-  { category: 'Neutral', level: 1, step: 60, color: '#5d5d5d', label: '1' },
-  { category: 'Neutral', level: 2, step: 80, color: '#6f6f6f', label: '2' },
-  { category: 'Neutral', level: 3, step: 100, color: '#929292', label: '3' },
-  { category: 'Neutral', level: 4, step: 130, color: '#dedede', label: '4' },
-  { category: 'Neutral', level: 5, step: 140, color: '#ebebeb', label: '5' },
-  { category: 'Neutral', level: 6, step: 150, color: '#f5f5f5', label: '6' },
+  { category: 'Neutral', level: 0, step: 26, color: '#242424', label: '0' },
+  { category: 'Neutral', level: 1, step: 48, color: '#5d5d5d', label: '1' },
+  { category: 'Neutral', level: 2, step: 54, color: '#6f6f6f', label: '2' },
+  { category: 'Neutral', level: 3, step: 66, color: '#929292', label: '3' },
+  { category: 'Neutral', level: 4, step: 90, color: '#dedede', label: '4' },
+  { category: 'Neutral', level: 5, step: 94, color: '#ebebeb', label: '5' },
+  { category: 'Neutral', level: 6, step: 97, color: '#f5f5f5', label: '6' },
+  
+  // Brand primitives (1-6)
+  { category: 'Brand', level: 1, step: 48, color: '#3B47CF', label: '1' },
+  { category: 'Brand', level: 2, step: 54, color: '#4858EB', label: '2' },
+  { category: 'Brand', level: 3, step: 66, color: '#6D86FF', label: '3' },
+  { category: 'Brand', level: 4, step: 90, color: '#D3DDff', label: '4' },
+  { category: 'Brand', level: 5, step: 94, color: '#E4EBFF', label: '5' },
+  { category: 'Brand', level: 6, step: 97, color: '#F2F5FF', label: '6' },
   
   // Danger primitives (1-6)
-  { category: 'Danger', level: 1, step: 60, color: '#aa1546', label: '1' },
-  { category: 'Danger', level: 2, step: 80, color: '#c02d56', label: '2' },
-  { category: 'Danger', level: 3, step: 100, color: '#e2617b', label: '3' },
-  { category: 'Danger', level: 4, step: 130, color: '#ffd0d6', label: '4' },
-  { category: 'Danger', level: 5, step: 140, color: '#ffe3e6', label: '5' },
-  { category: 'Danger', level: 6, step: 150, color: '#fff1f3', label: '6' },
+  { category: 'Danger', level: 1, step: 48, color: '#aa1546', label: '1' },
+  { category: 'Danger', level: 2, step: 54, color: '#c02d56', label: '2' },
+  { category: 'Danger', level: 3, step: 66, color: '#e2617b', label: '3' },
+  { category: 'Danger', level: 4, step: 90, color: '#ffd0d6', label: '4' },
+  { category: 'Danger', level: 5, step: 94, color: '#ffe3e6', label: '5' },
+  { category: 'Danger', level: 6, step: 97, color: '#fff1f3', label: '6' },
   
   // Warning primitives (1-6) 
-  { category: 'Warning', level: 1, step: 60, color: '#a93901', label: '1' },
-  { category: 'Warning', level: 2, step: 80, color: '#cd4808', label: '2' },
-  { category: 'Warning', level: 3, step: 100, color: '#e2693c', label: '3' },
-  { category: 'Warning', level: 4, step: 130, color: '#ffd3c4', label: '4' },
-  { category: 'Warning', level: 5, step: 140, color: '#ffe5dc', label: '5' },
-  { category: 'Warning', level: 6, step: 150, color: '#fff2ee', label: '6' },
+  { category: 'Warning', level: 1, step: 48, color: '#a93901', label: '1' },
+  { category: 'Warning', level: 2, step: 54, color: '#cd4808', label: '2' },
+  { category: 'Warning', level: 3, step: 66, color: '#e2693c', label: '3' },
+  { category: 'Warning', level: 4, step: 90, color: '#ffd3c4', label: '4' },
+  { category: 'Warning', level: 5, step: 94, color: '#ffe5dc', label: '5' },
+  { category: 'Warning', level: 6, step: 97, color: '#fff2ee', label: '6' },
   
   // Success primitives (1-6)
-  { category: 'Success', level: 1, step: 60, color: '#017048', label: '1' },
-  { category: 'Success', level: 2, step: 80, color: '#008455', label: '2' },
-  { category: 'Success', level: 3, step: 100, color: '#05ad72', label: '3' },
-  { category: 'Success', level: 4, step: 130, color: '#b9eccf', label: '4' },
-  { category: 'Success', level: 5, step: 140, color: '#d0f6e0', label: '5' },
-  { category: 'Success', level: 6, step: 150, color: '#e7fbef', label: '6' },
+  { category: 'Success', level: 1, step: 48, color: '#017048', label: '1' },
+  { category: 'Success', level: 2, step: 54, color: '#008455', label: '2' },
+  { category: 'Success', level: 3, step: 66, color: '#05ad72', label: '3' },
+  { category: 'Success', level: 4, step: 90, color: '#b9eccf', label: '4' },
+  { category: 'Success', level: 5, step: 94, color: '#d0f6e0', label: '5' },
+  { category: 'Success', level: 6, step: 97, color: '#e7fbef', label: '6' },
 ]
 
 export function PrimitivesTab() {
@@ -205,7 +213,7 @@ export function PrimitivesTab() {
                 : lightenColor(colorInfo.color, 3)
             }
             
-            const textColor = ['#ffffff', '#fcfcfc', '#fff1f3', '#fff2ee', '#e7fbef', '#f5f5f5', '#dedede', '#ebebeb', '#ffd0d6', '#ffe3e6', '#ffd3c4', '#ffe5dc', '#b9eccf', '#d0f6e0'].includes(colorInfo.color)
+            const textColor = ['#ffffff', '#fcfcfc', '#fff1f3', '#fff2ee', '#e7fbef', '#f5f5f5', '#dedede', '#ebebeb', '#ffd0d6', '#ffe3e6', '#ffd3c4', '#ffe5dc', '#b9eccf', '#d0f6e0', '#D3DDff', '#E4EBFF', '#F2F5FF'].includes(colorInfo.color)
               ? '#424242'
               : '#ffffff'
             
@@ -223,7 +231,7 @@ export function PrimitivesTab() {
                   onMouseDown={() => setPressedColor(uniqueKey)}
                   onMouseUp={() => setPressedColor(null)}
                 >
-                  <div>{getContrastRatioText(colorInfo.level)}</div>
+                  <div>{getContrastRatioText(colorInfo.step)}</div>
                   <div className={styles.hexValue}>{displayColor.toUpperCase()}</div>
                 </div>
               </div>

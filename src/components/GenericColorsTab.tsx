@@ -99,6 +99,14 @@ function getColorStepEquivalent(hex: string): number {
     '#b9eccf': 130, // Green 130
     '#d0f6e0': 140, // Green 140
     '#e7fbef': 150, // Green 150
+    
+    // Brand colors (steps 10-160)
+    '#3641bc': 50,  // Brand 50 - dark brand blue
+    '#4858eb': 80,  // Brand 80 - medium brand blue
+    '#92a8ff': 110, // Brand 110 - light brand blue
+    '#d3ddff': 130, // Brand 130 - very light brand blue (should darken)
+    '#e4ebff': 140, // Brand 140 - very light brand blue (should darken)
+    '#f2f5ff': 150, // Brand 150 - lightest brand blue (should darken)
   }
   
   return colorStepMap[hex.toLowerCase()] || 90 // Default to 90 if not found
@@ -107,8 +115,8 @@ function getColorStepEquivalent(hex: string): number {
 // Use the same interaction logic as ColorScale
 function shouldUseDarken(hex: string): boolean {
   const step = getColorStepEquivalent(hex)
-  // Match ColorScale logic: step === 80 || step > 100 use darken
-  return step === 80 || step > 100
+  // Match ColorScale logic: lighter colors (step >= 110) should darken
+  return step >= 110
 }
 
 const useStyles = makeStyles({
@@ -197,6 +205,7 @@ const genericColors = [
   { category: 'Surface', name: 'Neutral Primary', color: '#ffffff', label: 'Neutral Primary' },
   { category: 'Surface', name: 'Neutral Secondary', color: '#fcfcfc', label: 'Neutral Secondary' },
   
+  { category: 'Surface', name: 'Status Brand', color: '#F2F5FF', label: 'Brand' },
   { category: 'Surface', name: 'Status Danger', color: '#fff1f3', label: 'Danger' },
   { category: 'Surface', name: 'Status Warning', color: '#fff2ee', label: 'Warning' },
   { category: 'Surface', name: 'Status Success', color: '#e7fbef', label: 'Success' },
@@ -206,6 +215,9 @@ const genericColors = [
   { category: 'Background', name: 'Neutral Loud', color: '#6f6f6f', label: 'Neutral Loud' },
   { category: 'Background', name: 'Neutral Soft', color: '#dedede', label: 'Neutral Soft' },
   { category: 'Background', name: 'Neutral Subtle', color: '#f5f5f5', label: 'Neutral Subtle' },
+  { category: 'Background', name: 'Status Brand Loud', color: '#4858EB', label: 'Brand Loud' },
+  { category: 'Background', name: 'Status Brand Soft', color: '#D3DDff', label: 'Brand Soft' },
+  { category: 'Background', name: 'Status Brand Subtle', color: '#E4EBFF', label: 'Brand Subtle' },
   { category: 'Background', name: 'Status Danger Loud', color: '#c02d56', label: 'Danger Loud' },
   { category: 'Background', name: 'Status Danger Soft', color: '#ffd0d6', label: 'Danger Soft' },
   { category: 'Background', name: 'Status Danger Subtle', color: '#ffe3e6', label: 'Danger Subtle' },
@@ -220,6 +232,9 @@ const genericColors = [
   { category: 'Border', name: 'Neutral Primary', color: '#6f6f6f', label: 'Neutral Primary' },
   { category: 'Border', name: 'Neutral Secondary', color: '#929292', label: 'Neutral Secondary' },
   { category: 'Border', name: 'Neutral Tertiary', color: '#dedede', label: 'Neutral Tertiary' },
+  { category: 'Border', name: 'Status Brand Primary', color: '#4858EB', label: 'Brand Primary' },
+  { category: 'Border', name: 'Status Brand Secondary', color: '#92A8FF', label: 'Brand Secondary' },
+  { category: 'Border', name: 'Status Brand Tertiary', color: '#D3DDff', label: 'Brand Tertiary' },
   { category: 'Border', name: 'Status Danger Primary', color: '#c02d56', label: 'Danger Primary' },
   { category: 'Border', name: 'Status Danger Secondary', color: '#e2617b', label: 'Danger Secondary' },
   { category: 'Border', name: 'Status Danger Tertiary', color: '#ffd0d6', label: 'Danger Tertiary' },
@@ -234,6 +249,8 @@ const genericColors = [
   { category: 'Foreground', name: 'Text Primary', color: '#242424', label: 'Primary' },
   { category: 'Foreground', name: 'Text Secondary', color: '#5d5d5d', label: 'Secondary' },
   { category: 'Foreground', name: 'Text Placeholder', color: '#929292', label: 'Placeholder' },
+  { category: 'Foreground', name: 'Status Brand Text', color: '#3641BC', label: 'Primary' },
+  { category: 'Foreground', name: 'Status Brand Icon', color: '#4858EB', label: 'Secondary' },
   { category: 'Foreground', name: 'Status Danger Text', color: '#aa1546', label: 'Primary' },
   { category: 'Foreground', name: 'Status Danger Icon', color: '#c02d56', label: 'Secondary' },
   { category: 'Foreground', name: 'Status Warning Text', color: '#a93901', label: 'Primary' },
@@ -286,7 +303,7 @@ export function GenericColorsTab() {
                 <h3 className={styles.colorTitle}>{colorInfo.label}</h3>
                 <div className={styles.statesContainer}>
                   {states.map((state) => {
-                    const currentTextColor = ['#ffffff', '#fcfcfc', '#fff1f3', '#fff2ee', '#e7fbef', '#f5f5f5', '#dedede'].includes(state.color)
+                    const currentTextColor = ['#ffffff', '#fcfcfc', '#fff1f3', '#fff2ee', '#e7fbef', '#f5f5f5', '#dedede', '#F2F5FF', '#D3DDff', '#E4EBFF', '#92A8FF', '#b4c5ff', '#d3ddff', '#e4ebff', '#f2f5ff'].includes(state.color.toLowerCase())
                       ? '#424242'
                       : '#ffffff'
 

@@ -20,6 +20,7 @@ const useStyles = makeStyles({
 })
 
 const colorScales = [
+  { name: 'Brand', displayName: 'Brand' },
   { name: 'Red (10)', displayName: 'Red' },
   { name: 'Orange (40)', displayName: 'Orange' },
   { name: 'Green (160)', displayName: 'Green' },
